@@ -1555,12 +1555,14 @@ function App() {
                           <div
                             key={example}
                             style={{
-                              background: 'var(--surface-muted, #f8fafc)',
-                              borderLeft: '2px solid var(--accent, #273cff)',
-                              padding: '10px 12px',
-                              lineHeight: 1.5,
-                              fontSize: 13,
-                            }}
+                            background: '#f8fafc',
+                            color: '#111827',
+                            WebkitTextFillColor: '#111827',
+                            borderLeft: '2px solid var(--accent, #273cff)',
+                            padding: '10px 12px',
+                            lineHeight: 1.5,
+                            fontSize: 13,
+                          }}
                           >
                             {example}
                           </div>
@@ -1635,7 +1637,8 @@ function App() {
                             padding: 16,
                             border: '1px solid var(--border, #cbd5e1)',
                             borderRadius: 14,
-                            background: 'var(--surface-muted, #f8fafc)',
+                            background: 'var(--surface)',
+                            color: 'var(--text)',
                           }}
                         >
                           <div className="eyebrow">AI RECOMMENDATION</div>
