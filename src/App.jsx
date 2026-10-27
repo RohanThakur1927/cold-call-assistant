@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from './supabase'
 import './App.css'
 
-const API_URL = 'http://localhost:5000/api'
+const API_URL = 'https://callpilot-api-odtr.onrender.com/api'
 
 const stages = [
   ['Opening', 'Confirm you have reached the right person and open the conversation naturally.'],
@@ -1839,10 +1839,31 @@ function App() {
                     <div className="stat-top">Overdue</div>
                     <h2>{overdueFollowUps.length}</h2>
                   </div>
-                  <div className="stat-card stat-mint">
+                  <button
+                    className="stat-card stat-mint"
+                    type="button"
+                    onClick={() => {
+                      if (dueTodayFollowUps.length > 0) {
+                        reopenCall(dueTodayFollowUps[0])
+                      } else {
+                        showMessage('There are no pending follow-ups due today.', 'success')
+                      }
+                    }}
+                    disabled={dueTodayFollowUps.length === 0}
+                    title={dueTodayFollowUps.length > 0 ? 'Open the pending call due today' : 'No pending calls due today'}
+                    style={{
+                      width: '100%',
+                      textAlign: 'left',
+                      cursor: dueTodayFollowUps.length > 0 ? 'pointer' : 'not-allowed',
+                      font: 'inherit',
+                      color: 'inherit',
+                      border: '1px solid var(--border-color, #e8e3f2)',
+                    }}
+                  >
                     <div className="stat-top">Due today</div>
                     <h2>{dueTodayFollowUps.length}</h2>
-                  </div>
+                    {dueTodayFollowUps.length > 0 && <span style={{ fontSize: 12 }}>Click to open pending call</span>}
+                  </button>
                   <div className="stat-card stat-violet">
                     <div className="stat-top">Upcoming</div>
                     <h2>{upcomingFollowUps.filter(call => call.follow_up_date > todayKey).length}</h2>
