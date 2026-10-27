@@ -7,8 +7,16 @@ const { createClient } = require('@supabase/supabase-js')
 const app = express()
 const PORT = process.env.PORT || 5000
 
-const FRONTEND_ORIGIN =
-  process.env.FRONTEND_ORIGIN || 'http://localhost:5173'
+// Allowed frontend origins.
+const allowedOrigins = new Set([
+  'https://cold-call-assistant-five.vercel.app',
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  ...(process.env.FRONTEND_ORIGIN || '')
+    .split(',')
+    .map(origin => origin.trim())
+    .filter(Boolean),
+])
 
 const GEMINI_MODEL =
   process.env.GEMINI_MODEL || 'gemini-3.6-flash'
@@ -31,7 +39,24 @@ const supabase = createClient(
   }
 )
 
-app.use(cors({ origin: FRONTEND_ORIGIN }))
+// CORS configuration.
+const corsOptions = {
+  origin(origin, callback) {
+    // Permit requests without an Origin header, such as health checks.
+    if (!origin || allowedOrigins.has(origin)) {
+      return callback(null, true)
+    }
+
+    console.warn(`CORS blocked origin: ${origin}`)
+    return callback(new Error(`CORS blocked origin: ${origin}`))
+  },
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 204,
+}
+
+app.use(cors(corsOptions))
+app.options(/.*/, cors(corsOptions))
 app.use(express.json({ limit: '100kb' }))
 
 const stages = [
@@ -699,5 +724,5 @@ app.get('/api/calls', requireUser, async (req, res) => {
 })
 
 app.listen(PORT, () => {
-  console.log(`CallPilot API running at http://localhost:${PORT}`)
+  console.log(`CallPilot API running on port ${PORT}`)
 })
